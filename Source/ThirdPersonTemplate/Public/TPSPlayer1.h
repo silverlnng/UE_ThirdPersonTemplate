@@ -4,7 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputAction.h"
 #include "TPSPlayer1.generated.h"
+
+
+
+//클래스 추가 _ 전방선언
+//식별자를 정의하기전 식별자의 존재를 컴파일러에 미리 알리는 것 
+
+class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class THIRDPERSONTEMPLATE_API ATPSPlayer1 : public ACharacter
@@ -30,4 +39,35 @@ public:
 
 	UPROPERTY(VisibleAnyWhere, Category = "Camera")
 	class USpringArmComponent* springArmComp;
+
+	UPROPERTY(VisibleAnyWhere, Category = "Camera")
+	class UCameraComponent* CameraComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputMappingContext* PlayerMappingContext;
+	// 선언하고 만들어둔 Input Mapping Context 를  에디터에서 할당  "Category = Input"
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* MoveIA;		//UInputAction 사용은 헤더추가 , 클래스 전방선언 둘다 하기 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* LookUpIA;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* TurnIA;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* JumpIA;
+
+
+public:
+	void Move(const FInputActionValue& Value);
+	void LookUp(const FInputActionValue& Value);
+	void Turn(const FInputActionValue& Value);
+	void JumpInput(const FInputActionValue& Value);
+	
+	UPROPERTY(EditAnywhere,Category = "Move")
+	float moveSpeed;
+
+private:
+	FVector moveDir;
+
+	void Locomotion();
 };
