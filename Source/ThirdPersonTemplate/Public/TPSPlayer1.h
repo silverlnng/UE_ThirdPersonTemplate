@@ -43,9 +43,16 @@ public:
 	UPROPERTY(VisibleAnyWhere, Category = "Camera")
 	class UCameraComponent* CameraComp;
 
+	UPROPERTY(VisibleAnyWhere, Category = "Fire")
+	class UStaticMeshComponent* weaponMeshComp;
+	/*UPROPERTY(VisibleAnyWhere, Category = "Fire")
+	class UArrowComponent* firePosition;*/
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputMappingContext* PlayerMappingContext;
 	// 선언하고 만들어둔 Input Mapping Context 를  에디터에서 할당  "Category = Input"
+
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* MoveIA;		//UInputAction 사용은 헤더추가 , 클래스 전방선언 둘다 하기 
@@ -55,6 +62,8 @@ public:
 	UInputAction* TurnIA;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* JumpIA;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* FireIA;
 
 
 public:
@@ -62,9 +71,13 @@ public:
 	void LookUp(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void JumpInput(const FInputActionValue& Value);
+	void Fire(const FInputActionValue& Value);
 	
 	UPROPERTY(EditAnywhere,Category = "Move")
 	float moveSpeed;
+
+	UPROPERTY(EditAnywhere, Category = "Fire")
+	TSubclassOf<class APBullect> bullectFactory;
 
 private:
 	FVector moveDir;

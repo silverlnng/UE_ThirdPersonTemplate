@@ -1,23 +1,28 @@
 #include "TPSPlayer1.h"
+#include "PBullect.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h" //바인딩 하는 함수 SetupPlayerInputComponent
 #include "GameFramework/PlayerController.h"	//암기하기.  제어권의 컨트롤러 의미
+#include "Components/StaticMeshComponent.h"
+#include "Components/ArrowComponent.h"
+
+
 
 
 // Sets default values
 ATPSPlayer1::ATPSPlayer1()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> initMesh (TEXT("/Script/Engine.SkeletalMesh'/Game/Resource/unitychan.unitychan'"));	  //경로에 있는 데이터 로드
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> initMesh(TEXT("/Script/Engine.SkeletalMesh'/Game/Resource/unitychan.unitychan'"));	  //경로에 있는 데이터 로드
 	//마지막 파일명을 바뀌면 문제가 됨
 
 	if (initMesh.Succeeded()) // 그래서 방어코드 
 	{
-		GetMesh()->SetSkeletalMesh(initMesh.Object); //데이터 할당
+		GetMesh()->SetSkeletalMesh(initMesh.Object); //GetMesh()가 캐릭터의 Skeletalmesh를 리턴 .그리고 데이터 할당
 
 		GetMesh()->SetWorldLocationAndRotation(FVector(0, 0, -88), FRotator(0, -90, 0));
 	}
@@ -30,11 +35,26 @@ ATPSPlayer1::ATPSPlayer1()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(springArmComp);
-	CameraComp->bUsePawnControlRotation = false;
+	CameraComp->bUsePawnControlRotation = false; 
 
 	bUseControllerRotationYaw = true;  //pwan에 이미 할당되어있는 컴포넌트여서 바로 접근할수있음 
-	
+
 	moveSpeed = 100.0f;
+
+	//에셋을 넣기 위해서는 일단은 에셋 mesh을 넣을 그릇 staticMeshComponent 를 생성하기 
+
+	weaponMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshCompo"));
+	weaponMeshComp->SetupAttachment(GetMesh());		//GetMesh()가 캐릭터의 Skeletalmesh를 리턴
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> staffMesh(TEXT("/Script/Engine.StaticMesh'/Game/Resource/Sraff/WizardStaff_Staff.WizardStaff_Staff'"));
+
+	if (staffMesh.Succeeded()) // 그래서 방어코드 
+	{
+		weaponMeshComp->SetStaticMesh(staffMesh.Object);
+	}
+
+	/*firePosition = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowCompo"));
+	firePosition->SetupAttachment(weaponMeshComp);*/
 
 }
 
@@ -52,7 +72,76 @@ void ATPSPlayer1::BeginPlay()
 		}
 	}
 
+	//auto lamdaFunc = []() -> void {
+	//	UE_LOG(LogTemp, Warning, TEXT("lamda test"))
+
+	//	};	//지역변수처럼 여기 스코프에서만 사용가능 
+
+	//lamdaFunc();
+
+	/*int32 sum = 10;
+	auto lamdaFunc_add = [&sum](int number)->void
+		{
+			sum += number;
+		};
+	lamdaFunc_add(20);
+	UE_LOG(LogTemp, Warning, TEXT("sum: %d"), sum);
+
+	TArray<int32> Numbers = { 1,2,3,4,5,6,7,8,9,10 };
+	TArray<int32> EvenNumbers;
 	
+	for (const int32 i : Numbers)
+	{
+		if (i%2==0)
+		{
+			EvenNumbers.Add(i);
+		}
+	}
+
+	auto lamda_print = [](int num) -> void
+		{
+			UE_LOG(LogTemp, Warning, TEXT("EvenNumbers : %d"), num);
+		};
+
+	for (const int32 i : EvenNumbers)
+	{
+		lamda_print(i);
+	}*/
+
+	int a = 10;
+	int b = 5;
+	char operation = '+';
+
+	auto lamda_Caculator = [](int x, int y, char _operation)-> int 
+	{
+			switch(_operation)
+			{
+			case '+':
+				return x + y;
+				break;
+			case '-':
+				return x - y;
+				break;
+			case '/':
+				//나눗셈은 에러방지를 위해 나누는 값이 0 이 아닐때를 주의
+				if (y != 0)
+				{
+					return x / y;
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Error : division by zero"));
+					return 0;
+				}
+				break;
+			default:
+				UE_LOG(LogTemp, Warning, TEXT("Error : invalid operator"));
+				return 0;
+			};
+	};
+	int answer = lamda_Caculator(a, b, operation);
+	UE_LOG(LogTemp, Warning, TEXT("answer : %d"), answer);
+
 }
 
 // Called every frame
@@ -74,6 +163,7 @@ void ATPSPlayer1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(LookUpIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::LookUp);
 		EnhancedInputComponent->BindAction(TurnIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::Turn);
 		EnhancedInputComponent->BindAction(JumpIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::JumpInput);
+		EnhancedInputComponent->BindAction(FireIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::Fire);
 
 		//여기서 바인딩을 해서 인풋때마다 Move , Fire 함수가 실행되는 것 
 		// ETriggerEvent::Started,Completed ,,등 을 조절해서 바인드 액션을 조절할수있다
@@ -123,6 +213,7 @@ void ATPSPlayer1::JumpInput(const FInputActionValue& Value)
 	Jump();
 }
 
+
 void ATPSPlayer1::Locomotion()
 {
 	//이동방향을 컨트롤 방향 기준으로 변환
@@ -138,3 +229,18 @@ void ATPSPlayer1::Locomotion()
 
 }
 
+void ATPSPlayer1::Fire(const FInputActionValue& Value)
+{
+	FTransform Socket_firePosition = weaponMeshComp->GetSocketTransform(TEXT("FirePosition"));
+	//FTransform 에 location , rotation , scale 다들어가있음 ! 
+
+	if (Controller && Value.Get<bool>() == true)
+	{
+		GetWorld()->SpawnActor<APBullect>(bullectFactory, Socket_firePosition);
+		//FTransform 에 크기도 들어가서 소켓의 크기에 비례해서 생성됨 
+		//weaponMeshComp크기가 0.3 이고 weaponMeshComp의 소켓의 상대적크기 relativeScale 3.0 
+		//생성되는 총알 크기는 0.9 로 나옴 
+
+	}
+
+}

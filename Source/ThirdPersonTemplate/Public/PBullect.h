@@ -33,5 +33,5 @@ public:
 	UPROPERTY(VisibleAnywhere , Category = "mesh")
 	class UStaticMeshComponent* meshComp;
 
-
+	void Die();
 };

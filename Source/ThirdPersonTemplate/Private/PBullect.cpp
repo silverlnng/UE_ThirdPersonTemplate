@@ -35,6 +35,8 @@ APBullect::APBullect()
 	movementComp->bShouldBounce = true;				//반동을 설정
 	movementComp->Bounciness = 0.3f;				//반동의 크기 설정 작을수록 반동이 적음 
 
+	//InitialLifeSpan = 2.0f;		//actor에 있는 설정값 2초후에 destroy
+
 }
 
 // Called when the game starts or when spawned
@@ -42,12 +44,24 @@ void APBullect::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
+	FTimerHandle deathTimer;	//타미머를 조작하는 변수 ~= 알람 , 언리얼의 기능 
+	//GetWorld()->GetTimerManager().SetTimer(deathTimer, this, &APBullect::Die, 2.0f, false);
+	//(알림(FTimerHandle) , 알림처리를 할 객체 , 알림 처리 함수 , 알림시간 , 반복여부 , 최초딜레이시간)
 
+	GetWorld()->GetTimerManager().SetTimer(deathTimer, FTimerDelegate::CreateLambda([this]()->void{Destroy();}), 2.0f, false);
+	//람다로 한줄처리 
+
+
+}
 // Called every frame
 void APBullect::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void APBullect::Die()
+{
+	Destroy();
 }
 
