@@ -55,7 +55,7 @@ ATPSPlayer1::ATPSPlayer1()
 
 	/*firePosition = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowCompo"));
 	firePosition->SetupAttachment(weaponMeshComp);*/
-
+	fired = false;
 }
 
 // Called when the game starts or when spawned
@@ -108,39 +108,39 @@ void ATPSPlayer1::BeginPlay()
 		lamda_print(i);
 	}*/
 
-	int a = 10;
-	int b = 5;
-	char operation = '+';
+	//int a = 10;
+	//int b = 5;
+	//char operation = '+';
 
-	auto lamda_Caculator = [](int x, int y, char _operation)-> int 
-	{
-			switch(_operation)
-			{
-			case '+':
-				return x + y;
-				break;
-			case '-':
-				return x - y;
-				break;
-			case '/':
-				//나눗셈은 에러방지를 위해 나누는 값이 0 이 아닐때를 주의
-				if (y != 0)
-				{
-					return x / y;
-				}
-				else
-				{
-					UE_LOG(LogTemp, Warning, TEXT("Error : division by zero"));
-					return 0;
-				}
-				break;
-			default:
-				UE_LOG(LogTemp, Warning, TEXT("Error : invalid operator"));
-				return 0;
-			};
-	};
-	int answer = lamda_Caculator(a, b, operation);
-	UE_LOG(LogTemp, Warning, TEXT("answer : %d"), answer);
+	//auto lamda_Caculator = [](int x, int y, char _operation)-> int 
+	//{
+	//		switch(_operation)
+	//		{
+	//		case '+':
+	//			return x + y;
+	//			break;
+	//		case '-':
+	//			return x - y;
+	//			break;
+	//		case '/':
+	//			//나눗셈은 에러방지를 위해 나누는 값이 0 이 아닐때를 주의
+	//			if (y != 0)
+	//			{
+	//				return x / y;
+	//			}
+	//			else
+	//			{
+	//				UE_LOG(LogTemp, Warning, TEXT("Error : division by zero"));
+	//				return 0;
+	//			}
+	//			break;
+	//		default:
+	//			UE_LOG(LogTemp, Warning, TEXT("Error : invalid operator"));
+	//			return 0;
+	//		};
+	//};
+	//int answer = lamda_Caculator(a, b, operation);
+	//UE_LOG(LogTemp, Warning, TEXT("answer : %d"), answer);
 
 }
 
@@ -164,6 +164,7 @@ void ATPSPlayer1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(TurnIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::Turn);
 		EnhancedInputComponent->BindAction(JumpIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::JumpInput);
 		EnhancedInputComponent->BindAction(FireIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::Fire);
+		EnhancedInputComponent->BindAction(FireIA, ETriggerEvent::Completed, this, &ATPSPlayer1::Fire);
 
 		//여기서 바인딩을 해서 인풋때마다 Move , Fire 함수가 실행되는 것 
 		// ETriggerEvent::Started,Completed ,,등 을 조절해서 바인드 액션을 조절할수있다
@@ -222,7 +223,7 @@ void ATPSPlayer1::Locomotion()
 
 	moveDir = FTransform(GetControlRotation()).TransformVector(moveDir);
 
-	AddMovementInput(moveDir);
+	AddMovementInput(moveDir);		//
 
 	//방향을 초기화
 	moveDir = FVector::ZeroVector;
@@ -232,6 +233,7 @@ void ATPSPlayer1::Locomotion()
 void ATPSPlayer1::Fire(const FInputActionValue& Value)
 {
 	FTransform Socket_firePosition = weaponMeshComp->GetSocketTransform(TEXT("FirePosition"));
+	//weaponMeshComp 의 메쉬자체를 클릭해서 socket생성한후 이름으로 소켓 검색 
 	//FTransform 에 location , rotation , scale 다들어가있음 ! 
 
 	if (Controller && Value.Get<bool>() == true)
@@ -240,7 +242,10 @@ void ATPSPlayer1::Fire(const FInputActionValue& Value)
 		//FTransform 에 크기도 들어가서 소켓의 크기에 비례해서 생성됨 
 		//weaponMeshComp크기가 0.3 이고 weaponMeshComp의 소켓의 상대적크기 relativeScale 3.0 
 		//생성되는 총알 크기는 0.9 로 나옴 
-
+		fired = true;
 	}
-
+	else
+	{
+		fired = false;
+	}
 }

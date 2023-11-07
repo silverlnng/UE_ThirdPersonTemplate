@@ -71,8 +71,11 @@ public:
 	void LookUp(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void JumpInput(const FInputActionValue& Value);
+
+	UFUNCTION(BlueprintCallable)
 	void Fire(const FInputActionValue& Value);
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool fired;
 	UPROPERTY(EditAnywhere,Category = "Move")
 	float moveSpeed;
 
