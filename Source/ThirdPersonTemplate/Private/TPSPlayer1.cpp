@@ -44,14 +44,15 @@ ATPSPlayer1::ATPSPlayer1()
 	//에셋을 넣기 위해서는 일단은 에셋 mesh을 넣을 그릇 staticMeshComponent 를 생성하기 
 
 	weaponMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshCompo"));
-	weaponMeshComp->SetupAttachment(GetMesh());		//GetMesh()가 캐릭터의 Skeletalmesh를 리턴
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> staffMesh(TEXT("/Script/Engine.StaticMesh'/Game/Resource/Sraff/WizardStaff_Staff.WizardStaff_Staff'"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> staffMesh (TEXT("/Script/Engine.StaticMesh'/Game/Resource/Sraff/WizardStaff_Staff.WizardStaff_Staff'"));
 
 	if (staffMesh.Succeeded()) // 그래서 방어코드 
 	{
 		weaponMeshComp->SetStaticMesh(staffMesh.Object);
 	}
+	
+	weaponMeshComp->SetupAttachment(GetMesh(),FName("RightHandSocket"));		//GetMesh()가 캐릭터의 Skeletalmesh를 리턴
 
 	/*firePosition = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowCompo"));
 	firePosition->SetupAttachment(weaponMeshComp);*/
@@ -242,6 +243,14 @@ void ATPSPlayer1::Fire(const FInputActionValue& Value)
 		//FTransform 에 크기도 들어가서 소켓의 크기에 비례해서 생성됨 
 		//weaponMeshComp크기가 0.3 이고 weaponMeshComp의 소켓의 상대적크기 relativeScale 3.0 
 		//생성되는 총알 크기는 0.9 로 나옴 
+
+		UAnimInstance* animInstance = GetMesh() -> GetAnimInstance();
+		//animclass의 복사본에 접근하기 위해서 . AnimInstance을 사용 
+
+		if (animInstance)
+		{
+			animInstance->Montage_Play(fireAnimMotage);
+		}
 		fired = true;
 	}
 	else

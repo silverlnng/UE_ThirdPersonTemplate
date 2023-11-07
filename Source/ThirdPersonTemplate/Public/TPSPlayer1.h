@@ -82,6 +82,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Fire")
 	TSubclassOf<class APBullect> bullectFactory;
 
+	UPROPERTY(EditAnywhere, Category = "animation")
+	UAnimMontage* fireAnimMotage;
 private:
 	FVector moveDir;
 
