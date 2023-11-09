@@ -6,7 +6,11 @@
 #include "EnhancedInputComponent.h" //바인딩 하는 함수 SetupPlayerInputComponent
 #include "GameFramework/PlayerController.h"	//암기하기.  제어권의 컨트롤러 의미
 #include "Components/StaticMeshComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "Components/ArrowComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 
 
@@ -44,19 +48,22 @@ ATPSPlayer1::ATPSPlayer1()
 	//에셋을 넣기 위해서는 일단은 에셋 mesh을 넣을 그릇 staticMeshComponent 를 생성하기 
 
 	weaponMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshCompo"));
+	weaponMeshComp->SetupAttachment(GetMesh(),FName(TEXT("RightHandSocket")));		
+	//GetMesh()가 캐릭터의 Skeletalmesh를 리턴
+	//FName 은 검색속도가 최적화 (단 영어한정)
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> staffMesh (TEXT("/Script/Engine.StaticMesh'/Game/Resource/Sraff/WizardStaff_Staff.WizardStaff_Staff'"));
+	//ConstructorHelpers::FObjectFinder<UStaticMesh> staffMesh (TEXT("/Script/Engine.StaticMesh'/Game/Resource/Sraff///WizardStaff_Staff.WizardStaff_Staff'"));
+	//
+	//if (staffMesh.Succeeded()) // 그래서 방어코드 
+	//{
+	//	weaponMeshComp->SetStaticMesh(staffMesh.Object);
+	//}
 
-	if (staffMesh.Succeeded()) // 그래서 방어코드 
-	{
-		weaponMeshComp->SetStaticMesh(staffMesh.Object);
-	}
+	fireCoolTime = 1.85f;
+	fireTimerTime = 0;
+	fireReady = true;
+
 	
-	weaponMeshComp->SetupAttachment(GetMesh(),FName("RightHandSocket"));		//GetMesh()가 캐릭터의 Skeletalmesh를 리턴
-
-	/*firePosition = CreateDefaultSubobject<UArrowComponent>(TEXT("ArrowCompo"));
-	firePosition->SetupAttachment(weaponMeshComp);*/
-	fired = false;
 }
 
 // Called when the game starts or when spawned
@@ -72,76 +79,14 @@ void ATPSPlayer1::BeginPlay()
 			//UInputMappingContext* PlayerMappingContext 를 에디터에서 할당하고 AddMappingContext으로 사용 ! 
 		}
 	}
-
-	//auto lamdaFunc = []() -> void {
-	//	UE_LOG(LogTemp, Warning, TEXT("lamda test"))
-
-	//	};	//지역변수처럼 여기 스코프에서만 사용가능 
-
-	//lamdaFunc();
-
-	/*int32 sum = 10;
-	auto lamdaFunc_add = [&sum](int number)->void
-		{
-			sum += number;
-		};
-	lamdaFunc_add(20);
-	UE_LOG(LogTemp, Warning, TEXT("sum: %d"), sum);
-
-	TArray<int32> Numbers = { 1,2,3,4,5,6,7,8,9,10 };
-	TArray<int32> EvenNumbers;
+	weaponMeshComp->SetupAttachment(GetMesh(), FName(TEXT("RightHandSocket")));
 	
-	for (const int32 i : Numbers)
+
+	Niagara_SkeletalMesh = GetComponentByClass<UNiagaraComponent>();
+	if (Niagara_SkeletalMesh)
 	{
-		if (i%2==0)
-		{
-			EvenNumbers.Add(i);
-		}
+		Niagara_SkeletalMesh->SetVisibility(false);
 	}
-
-	auto lamda_print = [](int num) -> void
-		{
-			UE_LOG(LogTemp, Warning, TEXT("EvenNumbers : %d"), num);
-		};
-
-	for (const int32 i : EvenNumbers)
-	{
-		lamda_print(i);
-	}*/
-
-	//int a = 10;
-	//int b = 5;
-	//char operation = '+';
-
-	//auto lamda_Caculator = [](int x, int y, char _operation)-> int 
-	//{
-	//		switch(_operation)
-	//		{
-	//		case '+':
-	//			return x + y;
-	//			break;
-	//		case '-':
-	//			return x - y;
-	//			break;
-	//		case '/':
-	//			//나눗셈은 에러방지를 위해 나누는 값이 0 이 아닐때를 주의
-	//			if (y != 0)
-	//			{
-	//				return x / y;
-	//			}
-	//			else
-	//			{
-	//				UE_LOG(LogTemp, Warning, TEXT("Error : division by zero"));
-	//				return 0;
-	//			}
-	//			break;
-	//		default:
-	//			UE_LOG(LogTemp, Warning, TEXT("Error : invalid operator"));
-	//			return 0;
-	//		};
-	//};
-	//int answer = lamda_Caculator(a, b, operation);
-	//UE_LOG(LogTemp, Warning, TEXT("answer : %d"), answer);
 
 }
 
@@ -151,6 +96,10 @@ void ATPSPlayer1::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	Locomotion();
+	if (!fireReady)
+	{
+		fireCoolTimer(fireCoolTime, DeltaTime);
+	}
 }
 
 // Called to bind functionality to input
@@ -164,8 +113,8 @@ void ATPSPlayer1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(LookUpIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::LookUp);
 		EnhancedInputComponent->BindAction(TurnIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::Turn);
 		EnhancedInputComponent->BindAction(JumpIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::JumpInput);
+		//EnhancedInputComponent->BindAction(JumpIA, ETriggerEvent::Completed, this, &ATPSPlayer1::JumpInput);
 		EnhancedInputComponent->BindAction(FireIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::Fire);
-		EnhancedInputComponent->BindAction(FireIA, ETriggerEvent::Completed, this, &ATPSPlayer1::Fire);
 
 		//여기서 바인딩을 해서 인풋때마다 Move , Fire 함수가 실행되는 것 
 		// ETriggerEvent::Started,Completed ,,등 을 조절해서 바인드 액션을 조절할수있다
@@ -213,6 +162,15 @@ void ATPSPlayer1::Turn(const FInputActionValue& Value)
 void ATPSPlayer1::JumpInput(const FInputActionValue& Value)
 {
 	Jump();
+	//점프시작할때만 is falling을 체크 
+	/*if (Value.Get<bool>() == true)
+	{
+		ShowFx(true);
+	}*/
+	/*else
+	{
+		ShowFx(false);
+	}*/
 }
 
 
@@ -231,30 +189,61 @@ void ATPSPlayer1::Locomotion()
 
 }
 
-void ATPSPlayer1::Fire(const FInputActionValue& Value)
+void ATPSPlayer1::fireCoolTimer(float Duration , float deltaTime)
+{
+	if (fireTimerTime <Duration)
+	{
+		fireTimerTime += deltaTime;
+		fireReady = false;
+	}
+	else
+	{
+		fireTimerTime = 0;
+		fireReady = true;
+	}
+}
+
+void ATPSPlayer1::SpawnBullect()
 {
 	FTransform Socket_firePosition = weaponMeshComp->GetSocketTransform(TEXT("FirePosition"));
+	GetWorld()->SpawnActor<APBullect>(bullectFactory, Socket_firePosition);
+}
+
+void ATPSPlayer1::Fire(const FInputActionValue& Value)
+{
+	//FTransform Socket_firePosition = weaponMeshComp->GetSocketTransform(TEXT("FirePosition"));
 	//weaponMeshComp 의 메쉬자체를 클릭해서 socket생성한후 이름으로 소켓 검색 
 	//FTransform 에 location , rotation , scale 다들어가있음 ! 
 
 	if (Controller && Value.Get<bool>() == true)
 	{
-		GetWorld()->SpawnActor<APBullect>(bullectFactory, Socket_firePosition);
+		//GetWorld()->SpawnActor<APBullect>(bullectFactory, Socket_firePosition);
 		//FTransform 에 크기도 들어가서 소켓의 크기에 비례해서 생성됨 
 		//weaponMeshComp크기가 0.3 이고 weaponMeshComp의 소켓의 상대적크기 relativeScale 3.0 
 		//생성되는 총알 크기는 0.9 로 나옴 
+		
 
 		UAnimInstance* animInstance = GetMesh() -> GetAnimInstance();
 		//animclass의 복사본에 접근하기 위해서 . AnimInstance을 사용 
-
-		if (animInstance)
+		if (fireReady)
 		{
-			animInstance->Montage_Play(fireAnimMotage);
+			if (animInstance)
+			{
+				animInstance->Montage_Play(fireAnimMotage);
+			}
+
+			fireReady = false;
 		}
-		fired = true;
 	}
-	else
+	
+}
+
+void ATPSPlayer1::ShowFx()
+{
+	if (Niagara_SkeletalMesh == nullptr)	//null값일때만 다시 get하도록하는 방어코드
 	{
-		fired = false;
+		Niagara_SkeletalMesh = GetComponentByClass<UNiagaraComponent>();
 	}
+	bool show = GetCharacterMovement()->IsFalling();
+	Niagara_SkeletalMesh->SetVisibility(show);
 }

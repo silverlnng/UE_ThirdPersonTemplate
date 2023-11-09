@@ -48,7 +48,7 @@ void APBullect::BeginPlay()
 	//GetWorld()->GetTimerManager().SetTimer(deathTimer, this, &APBullect::Die, 2.0f, false);
 	//(알림(FTimerHandle) , 알림처리를 할 객체 , 알림 처리 함수 , 알림시간 , 반복여부 , 최초딜레이시간)
 
-	GetWorld()->GetTimerManager().SetTimer(deathTimer, FTimerDelegate::CreateLambda([this]()->void{Destroy();}), 2.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(deathTimer, FTimerDelegate::CreateLambda([this]()->void{Destroy();}), 4.0f, false);
 	//람다로 한줄처리 
 
 

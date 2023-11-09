@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputAction.h"
+#include "NiagaraComponent.h"
 #include "TPSPlayer1.generated.h"
 
 
@@ -43,7 +44,7 @@ public:
 	UPROPERTY(VisibleAnyWhere, Category = "Camera")
 	class UCameraComponent* CameraComp;
 
-	UPROPERTY(VisibleAnyWhere, Category = "Fire")
+	UPROPERTY(EditAnywhere, Category = "Fire")
 	class UStaticMeshComponent* weaponMeshComp;
 	/*UPROPERTY(VisibleAnyWhere, Category = "Fire")
 	class UArrowComponent* firePosition;*/
@@ -52,6 +53,8 @@ public:
 	UInputMappingContext* PlayerMappingContext;
 	// 선언하고 만들어둔 Input Mapping Context 를  에디터에서 할당  "Category = Input"
 
+	UPROPERTY(EditAnywhere, Category = "particle")
+	class UNiagaraComponent* Niagara_SkeletalMesh;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -71,11 +74,8 @@ public:
 	void LookUp(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void JumpInput(const FInputActionValue& Value);
-
 	UFUNCTION(BlueprintCallable)
 	void Fire(const FInputActionValue& Value);
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool fired;
 	UPROPERTY(EditAnywhere,Category = "Move")
 	float moveSpeed;
 
@@ -84,8 +84,21 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "animation")
 	UAnimMontage* fireAnimMotage;
-private:
-	FVector moveDir;
 
+private:
 	void Locomotion();
+	FVector moveDir;
+public:
+	UPROPERTY(EditAnywhere, Category = "Fire")
+	bool fireReady;
+	UPROPERTY(EditAnywhere, Category = "Fire")
+	float fireTimerTime;
+	UPROPERTY(EditAnywhere, Category = "Fire")
+	float fireCoolTime;
+protected:
+	void fireCoolTimer(float Duration, float deltaTime);
+
+public:
+	void SpawnBullect();
+	void ShowFx();
 };
