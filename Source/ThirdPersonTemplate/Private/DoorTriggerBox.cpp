@@ -40,27 +40,27 @@ void ADoorTriggerBox::OnPortalOverlapLevelLoadBegin(UPrimitiveComponent* Overlap
 {
 	ATPSPlayer1* _TPSPlayer = Cast<ATPSPlayer1>(OtherActor);
 
-	if (bForStream)
+	//if (bForStream)
 	{
-		if (_TPSPlayer!=nullptr && levelToLoad != "")
-		{
-			//UE_LOG(LogTemp, Warning, TEXT("TPSPlayer"));
-			//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("TPSPlayer"));
-			//////레벨로드 
-			////UGameplayStatics::OpenLevel(this, levelToLoad);
+	}//
+	if (_TPSPlayer != nullptr && levelToLoad != "")
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("TPSPlayer"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("TPSPlayer"));
+		//////레벨로드 
+		////UGameplayStatics::OpenLevel(this, levelToLoad);
 
-			FLatentActionInfo LactentInfo;
-			//로딩 과정 결과 따위의 정보들을 가지고 있는 구조체
-			UGameplayStatics::LoadStreamLevel(this, levelToLoad, true, true, LactentInfo);
-			//UGameplayStatics::UnLoadStreamLevel(this, levelToLoad, true, LactentInfo,true);
-			//로드자체를 언제할지 설계해야..
-			LevelStreming(bLoad);
-		}
+		FLatentActionInfo LactentInfo;
+		//로딩 과정 결과 따위의 정보들을 가지고 있는 구조체
+		UGameplayStatics::LoadStreamLevel(this, levelToLoad, true, true, LactentInfo);
+		//UGameplayStatics::UnLoadStreamLevel(this, levelToLoad, true, LactentInfo,true);
+		//로드자체를 언제할지 설계해야..
+		LevelStreming(bLoad);
 	}
-	else if(bForAttractorControl)
+	/*else if(bForAttractorControl)
 	{
 		AttractorControl();
-	}
+	}*/
 }
 
 void ADoorTriggerBox::LevelStreming(bool stream)	

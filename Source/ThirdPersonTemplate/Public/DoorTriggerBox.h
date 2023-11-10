@@ -43,9 +43,7 @@ public:
 	bool bForStream;
 	UPROPERTY(EditAnywhere, Category = "MainFunction")
 	bool bLoad;
-	UPROPERTY(EditAnywhere, Category = "MainFunction")
-	bool bForAttractorControl;
-
+	
 	UPROPERTY(EditAnywhere, Category = "AttractorControl")
 	bool bForAttractorControl;
 
