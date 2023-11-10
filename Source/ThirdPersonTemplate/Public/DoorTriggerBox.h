@@ -23,7 +23,33 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UBoxComponent* boxComp;
-	void OnPortalOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* boxComp;
+
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* meshComp;
+
+	UPROPERTY(EditAnywhere, Category = "particle")
+	class UNiagaraComponent* Niagara_;
+
+	UFUNCTION()
+	void OnPortalOverlapLevelLoadBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Level")
+	FName levelToLoad;
+	UPROPERTY(EditAnywhere, Category = "MainFunction")
+	bool bForStream;
+	UPROPERTY(EditAnywhere, Category = "MainFunction")
+	bool bLoad;
+	UPROPERTY(EditAnywhere, Category = "MainFunction")
+	bool bForAttractorControl;
+
+	UPROPERTY(EditAnywhere, Category = "AttractorControl")
+	bool bForAttractorControl;
+
+
+	void LevelStreming(bool stream);
+	void AttractorControl();
 };

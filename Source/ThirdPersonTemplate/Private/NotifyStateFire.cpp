@@ -7,7 +7,7 @@
 void UNotifyStateFire::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	//Notify가 불려지면 시작 첫(1) 프레임
-	GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("NotifyBegin"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("NotifyBegin"));
 	//GEngine->AddOnScreenDebugMessage() : 블루프린트에서 printString
 
 	tpsPlayer = Cast<ATPSPlayer1>(MeshComp->GetOwner());
@@ -23,13 +23,13 @@ void UNotifyStateFire::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 
 void UNotifyStateFire::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Magenta, TEXT("NotifyTick"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Magenta, TEXT("NotifyTick"));
 	//Notify가 불려지는 동안의 매 프레임
 }
 
 void UNotifyStateFire::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Blue, TEXT("NotifyEnd"));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Blue, TEXT("NotifyEnd"));
 	//Notify가 끝나는 (1) 프레임
 	
 }
