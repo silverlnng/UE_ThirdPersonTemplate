@@ -48,7 +48,7 @@ void ADoorTriggerBox::OnPortalOverlapLevelLoadBegin(UPrimitiveComponent* Overlap
 		//UE_LOG(LogTemp, Warning, TEXT("TPSPlayer"));
 		//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("TPSPlayer"));
 		//////레벨로드 
-		////UGameplayStatics::OpenLevel(this, levelToLoad);
+		//UGameplayStatics::OpenLevel(this, levelToLoad);
 
 		FLatentActionInfo LactentInfo;
 		//로딩 과정 결과 따위의 정보들을 가지고 있는 구조체
