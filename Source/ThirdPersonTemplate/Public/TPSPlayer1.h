@@ -44,7 +44,7 @@ public:
 	UPROPERTY(VisibleAnyWhere, Category = "Camera")
 	class UCameraComponent* CameraComp;
 
-	UPROPERTY(EditAnywhere, Category = "Fire")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire")
 	class UStaticMeshComponent* weaponMeshComp;
 	/*UPROPERTY(VisibleAnyWhere, Category = "Fire")
 	class UArrowComponent* firePosition;*/
