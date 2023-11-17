@@ -10,8 +10,8 @@
 
 
 
-//Å¬·¡½º Ãß°¡ _ Àü¹æ¼±¾ğ
-//½Äº°ÀÚ¸¦ Á¤ÀÇÇÏ±âÀü ½Äº°ÀÚÀÇ Á¸Àç¸¦ ÄÄÆÄÀÏ·¯¿¡ ¹Ì¸® ¾Ë¸®´Â °Í 
+//í´ë˜ìŠ¤ ì¶”ê°€ _ ì „ë°©ì„ ì–¸
+//ì‹ë³„ìë¥¼ ì •ì˜í•˜ê¸°ì „ ì‹ë³„ìì˜ ì¡´ì¬ë¥¼ ì»´íŒŒì¼ëŸ¬ì— ë¯¸ë¦¬ ì•Œë¦¬ëŠ” ê²ƒ 
 
 class UInputMappingContext;
 class UInputAction;
@@ -51,14 +51,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputMappingContext* PlayerMappingContext;
-	// ¼±¾ğÇÏ°í ¸¸µé¾îµĞ Input Mapping Context ¸¦  ¿¡µğÅÍ¿¡¼­ ÇÒ´ç  "Category = Input"
+	// ì„ ì–¸í•˜ê³  ë§Œë“¤ì–´ë‘” Input Mapping Context ë¥¼  ì—ë””í„°ì—ì„œ í• ë‹¹  "Category = Input"
 
 	UPROPERTY(EditAnywhere, Category = "particle")
 	class UNiagaraComponent* Niagara_SkeletalMesh;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
-	UInputAction* MoveIA;		//UInputAction »ç¿ëÀº Çì´õÃß°¡ , Å¬·¡½º Àü¹æ¼±¾ğ µÑ´Ù ÇÏ±â 
+	UInputAction* MoveIA;		//UInputAction ì‚¬ìš©ì€ í—¤ë”ì¶”ê°€ , í´ë˜ìŠ¤ ì „ë°©ì„ ì–¸ ë‘˜ë‹¤ í•˜ê¸° 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* LookUpIA;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
@@ -101,4 +101,13 @@ protected:
 public:
 	void SpawnBullect();
 	void ShowFx();
+
+	// í™”ì‚´ í¬ë¬¼ì„  ê·¸ë¦¬ë©´ì„œ ë‚ ë¦¬ê¸°
+	void SpwanArrow();
+	void TraceForArrow();
+	FVector originArrowSpwanLocation;
+	FRotator TargetArrowSpwanRotation;
+	void ClearArc();
+	void ProjectilePath();
+	void ChangeWeapon();
 };

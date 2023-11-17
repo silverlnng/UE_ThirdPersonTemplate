@@ -1,4 +1,9 @@
 #include "TPSPlayer1.h"
+
+#include <filesystem>
+#include <SceneExport.h>
+
+#include "CollisionDebugDrawingPublic.h"
 #include "PBullect.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -6,14 +11,14 @@
 #include "EnhancedInputComponent.h" //바인딩 하는 함수 SetupPlayerInputComponent
 #include "GameFramework/PlayerController.h"	//암기하기.  제어권의 컨트롤러 의미
 #include "Components/StaticMeshComponent.h"
-#include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
-#include "Components/ArrowComponent.h"
+#include "Animation/AnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
-
-
-
+#include "Camera/PlayerCameraManager.h"
+#include "Engine/LocalPlayer.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "UObject/ConstructorHelpers.h"
 
 // Sets default values
 ATPSPlayer1::ATPSPlayer1()
@@ -63,7 +68,8 @@ ATPSPlayer1::ATPSPlayer1()
 	fireTimerTime = 0;
 	fireReady = true;
 
-	
+	originArrowSpwanLocation = weaponMeshComp->GetSocketTransform(FName("FirePosition_2")).GetLocation();
+
 }
 
 // Called when the game starts or when spawned
@@ -100,6 +106,9 @@ void ATPSPlayer1::Tick(float DeltaTime)
 	{
 		fireCoolTimer(fireCoolTime, DeltaTime);
 	}
+
+	TraceForArrow();
+	ProjectilePath();
 }
 
 // Called to bind functionality to input
@@ -246,4 +255,79 @@ void ATPSPlayer1::ShowFx()
 	}
 	bool show = GetCharacterMovement()->IsFalling();
 	Niagara_SkeletalMesh->SetVisibility(show);
+}
+
+void ATPSPlayer1::SpwanArrow()
+{
+}
+
+void ATPSPlayer1::TraceForArrow()
+{
+	// 1. 카메라 매니저를 이용해서 line trace의 시작점 끝점 설정
+	APlayerCameraManager* PlayerCameraManager = Cast<APlayerCameraManager>(UGameplayStatics::GetPlayerCameraManager(GetWorld(), 0));
+	FVector impactPoint;
+	FVector CrossHairWorldLocation;
+	CrossHairWorldLocation = PlayerCameraManager->GetActorTransform().GetLocation();
+	impactPoint = (PlayerCameraManager->GetActorForwardVector())*15000.f+CrossHairWorldLocation;
+	
+	// 2. 라인트레이스 그리고 hit , hit가 아닌경우 나누기 
+	FHitResult HitResult;
+	FCollisionQueryParams param;
+	TArray<FHitResult> Hits;
+	TArray<AActor*> actorToIgnore;
+	actorToIgnore.Add(this);
+	
+	//ActorLineTraceSingle(HitResult,CrossHairWorldLocation,impactPoint,ECC_Visibility,param);
+	//bool hitResult_bool = ActorLineTraceSingle(HitResult,CrossHairWorldLocation,impactPoint,ECC_Visibility,param);
+	//ActorLineTraceSingle(CrossHairWorldLocation,impactPoint)
+	
+	UKismetSystemLibrary::LineTraceSingle(GetWorld(),CrossHairWorldLocation,impactPoint,ETraceTypeQuery::TraceTypeQuery1,false,actorToIgnore,
+	EDrawDebugTrace::ForOneFrame,HitResult, true,FLinearColor::Red, FLinearColor::Green,5.f);
+	
+	//DrawLineTraces(GetWorld(),CrossHairWorldLocation,impactPoint,Hits,5.0f);
+	
+	UE_LOG(LogTemp, Log, TEXT("hitResult_bool :: %s"), HitResult.IsValidBlockingHit() ? TEXT("true") : TEXT("false"));
+
+	originArrowSpwanLocation = weaponMeshComp->GetSocketTransform(FName("FirePosition_2")).GetLocation();
+	//위치를 tick 에서 계속 받을수있도록 만들기
+	
+	
+	if(HitResult.IsValidBlockingHit())
+	{
+		impactPoint = HitResult.Location;
+		GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("hitResult_bool"));
+	}
+	TargetArrowSpwanRotation = UKismetMathLibrary::MakeRotFromX(impactPoint -originArrowSpwanLocation);
+	// 3.  	
+	
+}
+
+void ATPSPlayer1::ClearArc()
+{
+}
+
+void ATPSPlayer1::ProjectilePath()
+{
+	FPredictProjectilePathParams PredictProjectilePathParam
+	(   10.f,
+		originArrowSpwanLocation,
+		UKismetMathLibrary::GetForwardVector(TargetArrowSpwanRotation)*4000.f,
+		10.0f
+	);
+	PredictProjectilePathParam.DrawDebugType=EDrawDebugTrace::Type::ForOneFrame;
+	//FPredictProjectilePathParams 구조체
+	
+	FPredictProjectilePathResult PredictResult;
+	
+	UGameplayStatics::PredictProjectilePath(GetWorld(),PredictProjectilePathParam,PredictResult);
+}
+
+void ATPSPlayer1::ChangeWeapon()
+{
+	//키누르면 무기 스태프 <-> 수류탄 선택해서 변경할수있도록 하기
+
+	//키누르면 ui 부터 생성 
+	
+
+	
 }
