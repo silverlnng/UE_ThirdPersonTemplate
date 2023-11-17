@@ -68,6 +68,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* FireIA;
 
+	//F 버튼 누르면 무기 선택 ui 창 나오고 그후에 마우스 클릭으로 발사하도록 만들기
+	
 
 public:
 	void Move(const FInputActionValue& Value);
@@ -103,11 +105,16 @@ public:
 	void ShowFx();
 
 	// 화살 포물선 그리면서 날리기
-	void SpwanArrow();
+	void SpwanGrenade();
 	void TraceForArrow();
 	FVector originArrowSpwanLocation;
 	FRotator TargetArrowSpwanRotation;
 	void ClearArc();
 	void ProjectilePath();
 	void ChangeWeapon();
+
+	UPROPERTY(EditAnywhere, Category = "Grenade")
+	TSubclassOf<class APGrenade> GrenadeFactory;
+	UPROPERTY(EditAnywhere, Category = "Grenade")
+	float grenadeSpeed;
 };

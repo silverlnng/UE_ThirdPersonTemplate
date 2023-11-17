@@ -19,7 +19,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "UObject/ConstructorHelpers.h"
-
+#include "PGrenade.h"
 // Sets default values
 ATPSPlayer1::ATPSPlayer1()
 {
@@ -216,6 +216,10 @@ void ATPSPlayer1::SpawnBullect()
 {
 	FTransform Socket_firePosition = weaponMeshComp->GetSocketTransform(TEXT("FirePosition"));
 	GetWorld()->SpawnActor<APBullect>(bullectFactory, Socket_firePosition);
+	//GetWorld()->SpawnActor<APBullect>(bullectFactory, Socket_firePosition);
+	//FTransform 에 크기도 들어가서 소켓의 크기에 비례해서 생성됨 
+	//weaponMeshComp크기가 0.3 이고 weaponMeshComp의 소켓의 상대적크기 relativeScale 3.0 
+	//생성되는 총알 크기는 0.9 로 나옴 
 }
 
 void ATPSPlayer1::Fire(const FInputActionValue& Value)
@@ -223,28 +227,17 @@ void ATPSPlayer1::Fire(const FInputActionValue& Value)
 	//FTransform Socket_firePosition = weaponMeshComp->GetSocketTransform(TEXT("FirePosition"));
 	//weaponMeshComp 의 메쉬자체를 클릭해서 socket생성한후 이름으로 소켓 검색 
 	//FTransform 에 location , rotation , scale 다들어가있음 ! 
-
-	if (Controller && Value.Get<bool>() == true)
+	UAnimInstance* animInstance = GetMesh()->GetAnimInstance();
+	//animclass의 복사본에 접근하기 위해서 . AnimInstance을 사용 
+	if (fireReady)
 	{
-		//GetWorld()->SpawnActor<APBullect>(bullectFactory, Socket_firePosition);
-		//FTransform 에 크기도 들어가서 소켓의 크기에 비례해서 생성됨 
-		//weaponMeshComp크기가 0.3 이고 weaponMeshComp의 소켓의 상대적크기 relativeScale 3.0 
-		//생성되는 총알 크기는 0.9 로 나옴 
-		
-
-		UAnimInstance* animInstance = GetMesh() -> GetAnimInstance();
-		//animclass의 복사본에 접근하기 위해서 . AnimInstance을 사용 
-		if (fireReady)
+		if (animInstance)
 		{
-			if (animInstance)
-			{
-				animInstance->Montage_Play(fireAnimMotage);
-			}
-
-			fireReady = false;
+			animInstance->Montage_Play(fireAnimMotage);
 		}
+
+		fireReady = false;
 	}
-	
 }
 
 void ATPSPlayer1::ShowFx()
@@ -257,8 +250,11 @@ void ATPSPlayer1::ShowFx()
 	Niagara_SkeletalMesh->SetVisibility(show);
 }
 
-void ATPSPlayer1::SpwanArrow()
+void ATPSPlayer1::SpwanGrenade()
 {
+	FTransform Socket_firePosition2 = weaponMeshComp->GetSocketTransform(TEXT("FirePosition_2"));
+	//TargetArrowSpwanRotation
+	//GetWorld()->SpawnActor<APGrenade>(GrenadeFactory, Socket_firePosition2);
 }
 
 void ATPSPlayer1::TraceForArrow()
@@ -311,7 +307,7 @@ void ATPSPlayer1::ProjectilePath()
 	FPredictProjectilePathParams PredictProjectilePathParam
 	(   10.f,
 		originArrowSpwanLocation,
-		UKismetMathLibrary::GetForwardVector(TargetArrowSpwanRotation)*4000.f,
+		UKismetMathLibrary::GetForwardVector(TargetArrowSpwanRotation)*(grenadeSpeed),
 		10.0f
 	);
 	PredictProjectilePathParam.DrawDebugType=EDrawDebugTrace::Type::ForOneFrame;

@@ -18,6 +18,7 @@ void UNotifyStateFire::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequen
 	if (tpsPlayer)      // 그래서 null 체크 해주기 
 	{
 		tpsPlayer->SpawnBullect();
+		tpsPlayer->SpwanGrenade();
 	}
 }
 
