@@ -124,7 +124,8 @@ void ATPSPlayer1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(JumpIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::JumpInput);
 		//EnhancedInputComponent->BindAction(JumpIA, ETriggerEvent::Completed, this, &ATPSPlayer1::JumpInput);
 		EnhancedInputComponent->BindAction(FireIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::Fire);
-
+		EnhancedInputComponent->BindAction(Fkeyboard_IA, ETriggerEvent::Triggered, this, &ATPSPlayer1::Fkeyboard);
+		
 		//여기서 바인딩을 해서 인풋때마다 Move , Fire 함수가 실행되는 것 
 		// ETriggerEvent::Started,Completed ,,등 을 조절해서 바인드 액션을 조절할수있다
 
@@ -252,9 +253,13 @@ void ATPSPlayer1::ShowFx()
 
 void ATPSPlayer1::SpwanGrenade()
 {
-	FTransform Socket_firePosition2 = weaponMeshComp->GetSocketTransform(TEXT("FirePosition_2"));
+	//FTransform Socket_firePosition2 = weaponMeshComp->GetSocketTransform(TEXT("FirePosition_2"));
+	FTransform Socket_firePosition2;
+	Socket_firePosition2.SetLocation(weaponMeshComp->GetSocketLocation(TEXT("FirePosition_2")));
+	Socket_firePosition2.SetRotation(TargetArrowSpwanRotation.Quaternion());
 	//TargetArrowSpwanRotation
-	//GetWorld()->SpawnActor<APGrenade>(GrenadeFactory, Socket_firePosition2);
+	GetWorld()->SpawnActor<APGrenade>(GrenadeFactory, Socket_firePosition2);
+	//GetWorld()->SpawnActor<APGrenade>(GrenadeFactory, );
 }
 
 void ATPSPlayer1::TraceForArrow()
@@ -282,7 +287,7 @@ void ATPSPlayer1::TraceForArrow()
 	
 	//DrawLineTraces(GetWorld(),CrossHairWorldLocation,impactPoint,Hits,5.0f);
 	
-	UE_LOG(LogTemp, Log, TEXT("hitResult_bool :: %s"), HitResult.IsValidBlockingHit() ? TEXT("true") : TEXT("false"));
+	//UE_LOG(LogTemp, Log, TEXT("hitResult_bool :: %s"), HitResult.IsValidBlockingHit() ? TEXT("true") : TEXT("false"));
 
 	originArrowSpwanLocation = weaponMeshComp->GetSocketTransform(FName("FirePosition_2")).GetLocation();
 	//위치를 tick 에서 계속 받을수있도록 만들기
@@ -291,7 +296,7 @@ void ATPSPlayer1::TraceForArrow()
 	if(HitResult.IsValidBlockingHit())
 	{
 		impactPoint = HitResult.Location;
-		GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("hitResult_bool"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("hitResult_bool"));
 	}
 	TargetArrowSpwanRotation = UKismetMathLibrary::MakeRotFromX(impactPoint -originArrowSpwanLocation);
 	// 3.  	
@@ -326,4 +331,13 @@ void ATPSPlayer1::ChangeWeapon()
 	
 
 	
+}
+
+void ATPSPlayer1::Fkeyboard(const FInputActionValue& Value)
+{
+	if (fireReady)
+	{
+		SpwanGrenade();
+		fireReady = false;
+	}
 }

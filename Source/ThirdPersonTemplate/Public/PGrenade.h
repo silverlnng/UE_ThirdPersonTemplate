@@ -27,10 +27,10 @@ public:
 	UPROPERTY(VisibleAnywhere , Category = "Movement")
 	class UProjectileMovementComponent* movementComp;	//포물선운동을 하는 기능
 
-	UPROPERTY(VisibleAnywhere , Category = "collision")
-	class USphereComponent* sphereCollionComp;
+	UPROPERTY(EditAnywhere , Category = "collision")
+	class UBoxComponent* boxCollionComp;
 
-	UPROPERTY(VisibleAnywhere , Category = "mesh")
+	UPROPERTY(EditAnywhere , Category = "mesh")
 	class UStaticMeshComponent* meshComp;
 
 	UPROPERTY(EditAnywhere , Category = "mesh")

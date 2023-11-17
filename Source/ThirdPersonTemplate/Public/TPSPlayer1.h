@@ -67,7 +67,8 @@ public:
 	UInputAction* JumpIA;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* FireIA;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* Fkeyboard_IA;
 	//F 버튼 누르면 무기 선택 ui 창 나오고 그후에 마우스 클릭으로 발사하도록 만들기
 	
 
@@ -117,4 +118,5 @@ public:
 	TSubclassOf<class APGrenade> GrenadeFactory;
 	UPROPERTY(EditAnywhere, Category = "Grenade")
 	float grenadeSpeed;
+	void Fkeyboard(const FInputActionValue& Value);
 };
