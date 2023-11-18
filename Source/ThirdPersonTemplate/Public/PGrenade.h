@@ -24,10 +24,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	
 public:
-	UPROPERTY(VisibleAnywhere , Category = "Movement")
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite , Category = "Movement")
 	class UProjectileMovementComponent* movementComp;	//포물선운동을 하는 기능
 
-	UPROPERTY(EditAnywhere , Category = "collision")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "collision")
 	class UBoxComponent* boxCollionComp;
 
 	UPROPERTY(EditAnywhere , Category = "mesh")
@@ -35,7 +35,7 @@ public:
 
 	UPROPERTY(EditAnywhere , Category = "mesh")
 	float Grenadespeed;
-
+	UFUNCTION()
 	void OnGrenadeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSeep, const FHitResult& SweepResult);
 	
 };

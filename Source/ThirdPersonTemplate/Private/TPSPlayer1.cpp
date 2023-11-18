@@ -93,7 +93,7 @@ void ATPSPlayer1::BeginPlay()
 	{
 		Niagara_SkeletalMesh->SetVisibility(false);
 	}
-
+	
 }
 
 // Called every frame

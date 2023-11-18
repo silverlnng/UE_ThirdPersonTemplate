@@ -21,13 +21,14 @@ APGrenade::APGrenade()
 
 	movementComp->InitialSpeed = Grenadespeed;
 	movementComp->MaxSpeed = Grenadespeed;
+	boxCollionComp->OnComponentBeginOverlap.AddDynamic(this,&APGrenade::OnGrenadeOverlap);
 }
 
 // Called when the game starts or when spawned
 void APGrenade::BeginPlay()
 {
 	Super::BeginPlay();
-	boxCollionComp->OnComponentBeginOverlap.AddDynamic(this,&APGrenade::OnGrenadeOverlap);
+	//boxCollionComp->OnComponentBeginOverlap.AddDynamic(this,&APGrenade::OnGrenadeOverlap);
 	//충돌할때 델리게이트 설정 
 }
 
@@ -40,11 +41,14 @@ void APGrenade::Tick(float DeltaTime)
 void APGrenade::OnGrenadeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSeep, const FHitResult& SweepResult)
 {
-	
+		if(OtherActor==this)
+		{
+			return;
+		}
 		UE_LOG(LogTemp, Log, TEXT("Overlap GetName :: %s"), *OtherActor->GetName());
 		movementComp->StopMovementImmediately();
 		movementComp->ProjectileGravityScale = 0.f;
 		AttachToActor(OtherActor, FAttachmentTransformRules(EAttachmentRule::KeepWorld, true));
-		//sphereCollionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		boxCollionComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
