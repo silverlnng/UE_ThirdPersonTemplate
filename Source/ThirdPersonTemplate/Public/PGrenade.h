@@ -23,6 +23,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
+private:
+	UPROPERTY(EditAnywhere , Category = "mesh")
+	float Grenadespeed;
+	
 public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite , Category = "Movement")
 	class UProjectileMovementComponent* movementComp;	//포물선운동을 하는 기능
@@ -33,9 +37,9 @@ public:
 	UPROPERTY(EditAnywhere , Category = "mesh")
 	class UStaticMeshComponent* meshComp;
 
-	UPROPERTY(EditAnywhere , Category = "mesh")
-	float Grenadespeed;
 	UFUNCTION()
 	void OnGrenadeOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSeep, const FHitResult& SweepResult);
+
+	const float& GetGrenadeSpeed() {return  Grenadespeed;}
 	
 };

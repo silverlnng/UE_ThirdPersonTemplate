@@ -20,6 +20,9 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 #include "PGrenade.h"
+#include "Engine/World.h"
+#include  "SlashHUD.h"
+#include  "SlashOverlay.h"
 // Sets default values
 ATPSPlayer1::ATPSPlayer1()
 {
@@ -69,7 +72,7 @@ ATPSPlayer1::ATPSPlayer1()
 	fireReady = true;
 
 	originArrowSpwanLocation = weaponMeshComp->GetSocketTransform(FName("FirePosition_2")).GetLocation();
-
+	
 }
 
 // Called when the game starts or when spawned
@@ -93,7 +96,26 @@ void ATPSPlayer1::BeginPlay()
 	{
 		Niagara_SkeletalMesh->SetVisibility(false);
 	}
-	
+
+	//grenadeClass = APGrenade::StaticClass();
+	//grenade_=Cast<APGrenade>(grenadeClass);
+	//grenade_ = GetWorld()->SpawnActor(APGrenade::StaticClass());
+	//grenade_ =Cast<APGrenade>(GetWorld()->SpawnActor(APGrenade::StaticClass()));
+	// 처음에는 변수값이 0인 상태로  생성되다가 시간이 지나면 아예 사라지는게 확인됨.
+
+	APlayerController* playerController = Cast<APlayerController>(GetController());
+	if (playerController)
+	{
+		ASlashHUD* slashHUD =Cast<ASlashHUD>(playerController->GetHUD());
+		if(slashHUD)
+		{
+			USlashOverlay*  SlashOverlay = slashHUD->GetSlashOverlay();
+			if(SlashOverlay)
+			{
+				SlashOverlay->SetGoldText("goldText");
+			}
+		}
+	}
 }
 
 // Called every frame
@@ -257,9 +279,7 @@ void ATPSPlayer1::SpwanGrenade()
 	FTransform Socket_firePosition2;
 	Socket_firePosition2.SetLocation(weaponMeshComp->GetSocketLocation(TEXT("FirePosition_2")));
 	Socket_firePosition2.SetRotation(TargetArrowSpwanRotation.Quaternion());
-	//TargetArrowSpwanRotation
 	GetWorld()->SpawnActor<APGrenade>(GrenadeFactory, Socket_firePosition2);
-	//GetWorld()->SpawnActor<APGrenade>(GrenadeFactory, );
 }
 
 void ATPSPlayer1::TraceForArrow()

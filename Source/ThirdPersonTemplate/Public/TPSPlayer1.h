@@ -116,8 +116,14 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Grenade")
 	TSubclassOf<class APGrenade> GrenadeFactory;
-	//APGrenade* grenadeClass;
+	
+	UPROPERTY(EditAnywhere, Category = "Grenade")
+	UClass* grenadeClass;
+	UPROPERTY(EditAnywhere, Category = "Grenade")
+	APGrenade* grenade_;
+	
 	UPROPERTY(EditAnywhere, Category = "Grenade")
 	float grenadeSpeed;
+	
 	void Fkeyboard(const FInputActionValue& Value);
 };
