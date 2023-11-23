@@ -101,4 +101,14 @@ protected:
 public:
 	void SpawnBullect();
 	void ShowFx();
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly ,Category = "Status")
+	float maxHP;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly ,Category = "Status")
+	float currentHP;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly ,Category = "Status")
+	float maxMP;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly ,Category = "Status")
+	float currentMP;
+	
 };

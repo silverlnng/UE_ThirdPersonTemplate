@@ -63,6 +63,12 @@ ATPSPlayer1::ATPSPlayer1()
 	fireTimerTime = 0;
 	fireReady = true;
 
+	maxHP=100;
+	currentHP=0;
+	maxMP=100;
+	currentMP=0;
+	
+	
 	
 }
 

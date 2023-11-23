@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "DoorTriggerBox.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "NiagaraComponent.h"
 #include "TPSPlayer1.h"
 #include "Kismet/GameplayStatics.h"
-#include "DoorTriggerBox.h"
 
 // Sets default values
 ADoorTriggerBox::ADoorTriggerBox()

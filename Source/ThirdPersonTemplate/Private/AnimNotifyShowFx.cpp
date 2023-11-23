@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "AnimNotifyShowFx.h"
 #include "TPSPlayer1.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "AnimNotifyShowFx.h"
 
 void UAnimNotifyShowFx::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
