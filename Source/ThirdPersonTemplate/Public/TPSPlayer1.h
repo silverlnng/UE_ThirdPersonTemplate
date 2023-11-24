@@ -38,10 +38,10 @@ public:
 
 public:
 
-	UPROPERTY(VisibleAnyWhere, Category = "Camera")
+	UPROPERTY(VisibleAnyWhere,BlueprintReadWrite , Category = "Camera")
 	class USpringArmComponent* springArmComp;
 
-	UPROPERTY(VisibleAnyWhere, Category = "Camera")
+	UPROPERTY(VisibleAnyWhere,BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* CameraComp;
 
 	UPROPERTY(EditAnywhere, Category = "Fire")
@@ -67,13 +67,15 @@ public:
 	UInputAction* JumpIA;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* FireIA;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* InteractionIA;
 
 public:
 	void Move(const FInputActionValue& Value);
 	void LookUp(const FInputActionValue& Value);
 	void Turn(const FInputActionValue& Value);
 	void JumpInput(const FInputActionValue& Value);
+	void InteractionPositive(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable)
 	void Fire(const FInputActionValue& Value);
 	UPROPERTY(EditAnywhere,Category = "Move")
@@ -102,13 +104,13 @@ public:
 	void SpawnBullect();
 	void ShowFx();
 	
-	UPROPERTY(EditAnywhere,BlueprintReadOnly ,Category = "Status")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite ,Category = "Status")
 	float maxHP;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly ,Category = "Status")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite ,Category = "Status")
 	float currentHP;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly ,Category = "Status")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite ,Category = "Status")
 	float maxMP;
-	UPROPERTY(EditAnywhere,BlueprintReadOnly ,Category = "Status")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite ,Category = "Status")
 	float currentMP;
 	
 };

@@ -6,11 +6,10 @@
 #include "EnhancedInputComponent.h" //바인딩 하는 함수 SetupPlayerInputComponent
 #include "GameFramework/PlayerController.h"	//암기하기.  제어권의 컨트롤러 의미
 #include "Components/StaticMeshComponent.h"
-#include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-
+#include  "DrawDebugHelpers.h"
 
 
 
@@ -121,7 +120,7 @@ void ATPSPlayer1::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(JumpIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::JumpInput);
 		//EnhancedInputComponent->BindAction(JumpIA, ETriggerEvent::Completed, this, &ATPSPlayer1::JumpInput);
 		EnhancedInputComponent->BindAction(FireIA, ETriggerEvent::Triggered, this, &ATPSPlayer1::Fire);
-
+		EnhancedInputComponent->BindAction(InteractionIA, ETriggerEvent::Started, this, &ATPSPlayer1::InteractionPositive);
 		//여기서 바인딩을 해서 인풋때마다 Move , Fire 함수가 실행되는 것 
 		// ETriggerEvent::Started,Completed ,,등 을 조절해서 바인드 액션을 조절할수있다
 
@@ -177,6 +176,21 @@ void ATPSPlayer1::JumpInput(const FInputActionValue& Value)
 	{
 		ShowFx(false);
 	}*/
+}
+
+void ATPSPlayer1::InteractionPositive(const FInputActionValue& Value)
+{
+	FVector _location;
+	FRotator _rotation;
+	FHitResult _hitOut;
+	GetController()->GetPlayerViewPoint(_location,_rotation);
+	//플레이어의 뷰포인트 == 카메라가 보고있는 뷰 != 캐릭터의 시점아님 
+	//플레이어의 뷰포인트 ==> 캐릭터의 시점아님
+	FVector _start = _location;
+	FVector _End = (_rotation.Vector()*2000);
+	FCollisionQueryParams _traceParams;		//
+	GetWorld()->LineTraceSingleByChannel(_hitOut,_start,_End,ECC_Visibility,_traceParams);
+	DrawDebugLine(GetWorld(),_start,_End,FColor::Cyan,false,2.0f);
 }
 
 
