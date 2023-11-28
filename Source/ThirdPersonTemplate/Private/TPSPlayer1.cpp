@@ -67,7 +67,7 @@ ATPSPlayer1::ATPSPlayer1()
 	maxMP=100;
 	currentMP=0;
 	
-	
+	interactionDistance = 2000.f;
 	
 }
 
@@ -186,8 +186,12 @@ void ATPSPlayer1::InteractionPositive(const FInputActionValue& Value)
 	GetController()->GetPlayerViewPoint(_location,_rotation);
 	//플레이어의 뷰포인트 == 카메라가 보고있는 뷰 != 캐릭터의 시점아님 
 	//플레이어의 뷰포인트 ==> 캐릭터의 시점아님
-	FVector _start = _location;
-	FVector _End = (_rotation.Vector()*2000);
+	/*FVector _start = _location;
+	FVector _End = (_rotation.Vector()*2000);*/
+
+	FVector _start = GetActorLocation();
+	FVector _End = GetActorLocation() +(GetActorForwardVector() * interactionDistance); // 2000-> Disatance
+	
 	FCollisionQueryParams _traceParams;		//
 	GetWorld()->LineTraceSingleByChannel(_hitOut,_start,_End,ECC_Visibility,_traceParams);
 	DrawDebugLine(GetWorld(),_start,_End,FColor::Cyan,false,2.0f);
