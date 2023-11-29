@@ -271,3 +271,17 @@ void ATPSPlayer1::ShowFx()
 	bool show = GetCharacterMovement()->IsFalling();
 	Niagara_SkeletalMesh->SetVisibility(show);
 }
+
+void ATPSPlayer1::UpdateMoney(int64 inputVal)
+{
+	int64 _result;
+	_result = money +inputVal;
+	if(_result<0)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("NotEnoughMoney"));
+	}
+	else
+	{
+		money = _result;
+	}
+}
