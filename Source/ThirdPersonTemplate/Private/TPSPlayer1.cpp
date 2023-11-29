@@ -275,8 +275,8 @@ void ATPSPlayer1::ShowFx()
 void ATPSPlayer1::UpdateMoney(int64 inputVal)
 {
 	int64 _result;
-	_result = money +inputVal;
-	if(_result<0)
+	_result = money + inputVal;
+	if (_result < 0)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.0, FColor::Green, TEXT("NotEnoughMoney"));
 	}
