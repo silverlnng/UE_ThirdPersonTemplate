@@ -47,6 +47,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Time")
 	FLinearColor Color9;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Time")
+	FLinearColor Color12;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Time")
 	FLinearColor Color15;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Time")
 	FLinearColor Color18;

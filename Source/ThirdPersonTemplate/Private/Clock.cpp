@@ -4,6 +4,7 @@
 #include "Clock.h"
 
 #include "Engine/DirectionalLight.h"
+#include "Components/DirectionalLightComponent.h"
 
 #define ONE_YEAR 31104000
 #define ONE_DAY 
@@ -63,7 +64,44 @@ void AClock::RotateDirectionalLightWithTime(AActor* owningActor)
 			float currentAngle =hourAngle +minuteAngle+secondAngle;
 			FRotator newRotation = FRotator(currentAngle,0.0f,0.0f);
 			directionalLight->SetActorRotation(newRotation);
-			
+
+			UDirectionalLightComponent* DirectionalLightCom = directionalLight->GetComponent();
+
+			FLinearColor interpolatedColor;
+			float lightTime = currentHour + (currentMinute/60);
+			if(lightTime>0 && lightTime <=3)
+			{
+				interpolatedColor = FLinearColor::LerpUsingHSV(Color24,Color3,lightTime/3.0f);
+			}
+			if(lightTime>3 && lightTime <=6)
+			{
+				interpolatedColor = FLinearColor::LerpUsingHSV(Color3,Color6,lightTime/3.0f);
+			}
+			if(lightTime>6 && lightTime <=9)
+			{
+				interpolatedColor = FLinearColor::LerpUsingHSV(Color6,Color9,lightTime/3.0f);
+			}
+			if(lightTime>9 && lightTime <=12)
+			{
+				interpolatedColor = FLinearColor::LerpUsingHSV(Color9,Color12,lightTime/3.0f);
+			}
+			if(lightTime>12 && lightTime <=15)
+			{
+				interpolatedColor = FLinearColor::LerpUsingHSV(Color12,Color15,lightTime/3.0f);
+			}
+			if(lightTime>15 && lightTime <=18)
+			{
+				interpolatedColor = FLinearColor::LerpUsingHSV(Color15,Color18,lightTime/3.0f);
+			}
+			if(lightTime>18 && lightTime <=21)
+			{
+				interpolatedColor = FLinearColor::LerpUsingHSV(Color18,Color21,lightTime/3.0f);
+			}
+			if(lightTime>21 && lightTime <=24)
+			{
+				interpolatedColor = FLinearColor::LerpUsingHSV(Color21,Color24,lightTime/3.0f);
+			}
+			DirectionalLightCom->SetLightColor(interpolatedColor);
 		}
 	}
 }
