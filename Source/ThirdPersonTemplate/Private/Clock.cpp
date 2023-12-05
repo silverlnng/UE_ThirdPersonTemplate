@@ -30,8 +30,9 @@ void AClock::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	UpdateTime(DeltaTime);
-	RotateDirectionalLightWithTime(Sun);
+	//RotateDirectionalLightWithTime(Sun);
 	//GetTimeByTotalSec(DeltaTime);
+	UpdateSunColorByHourMinute(Sun);
 }
 
 
@@ -103,6 +104,44 @@ void AClock::RotateDirectionalLightWithTime(AActor* owningActor)
 			}
 			DirectionalLightCom->SetLightColor(interpolatedColor);
 		}
+	}
+}
+
+void AClock::UpdateSunColorByHourMinute(AActor* owningActor)
+{
+	UDirectionalLightComponent* directionalLight = Cast<ADirectionalLight>(owningActor)->GetComponent();
+	float lightTime = currentHour + (currentMinute/60);
+
+	//시간값을 24시간 단위로 설정
+	lightTime = FMath::Fmod(lightTime,24.f);
+	
+
+	currentColorIndex = (FMath::FloorToInt(lightTime/3.f)) % (sunColors.Num());
+
+	//sunColors.Num()==8
+	//lightTime 0~3 ==>0  % 8 = 0
+	//lightTime 3~6 ==>1  % 8 = 1
+	//lightTime 6~9 ==>2  % 8 = 2
+
+	//lightTime 21~24 ==>7 % 8 = 7
+	
+	float interpolationVector = (lightTime-(currentColorIndex*3)) / 3.f;
+	//보간을 적용하는 비율
+	//lightTime은 점점 증가
+	
+	if(currentColorIndex+1<sunColors.Num())
+	{
+		FLinearColor interpolatedColor = FLinearColor::LerpUsingHSV(sunColors[currentColorIndex],
+		sunColors[currentColorIndex+1],interpolationVector);
+
+		directionalLight->SetLightColor(interpolatedColor);
+	}
+	else //lightTime 21~24 ==>7 % 8 = 7인 경우
+	{
+		FLinearColor interpolatedColor = FLinearColor::LerpUsingHSV(sunColors[currentColorIndex],
+		sunColors[0],interpolationVector);
+		
+		directionalLight->SetLightColor(interpolatedColor);
 	}
 }
 

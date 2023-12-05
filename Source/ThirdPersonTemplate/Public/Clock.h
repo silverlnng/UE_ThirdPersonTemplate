@@ -56,9 +56,16 @@ public:
 	FLinearColor Color21;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Time")
 	FLinearColor Color24;
+
+	UPROPERTY(EditAnywhere,Category="Sun")
+	TArray<FLinearColor> sunColors;
 	
-private:
+protected:
 	void UpdateTime(float DeltaSec);
 
-	void RotateDirectionalLightWithTime(AActor* owningActor);		
+	void RotateDirectionalLightWithTime(AActor* owningActor);
+
+	void UpdateSunColorByHourMinute(AActor* owningActor);
+
+	int currentColorIndex;
 };
