@@ -69,6 +69,8 @@ public:
 	UInputAction* FireIA;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* InteractionIA;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
+	UInputAction* InteractionIA_N;
 
 public:
 	void Move(const FInputActionValue& Value);
