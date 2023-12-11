@@ -7,9 +7,10 @@
 #include "Components/DirectionalLightComponent.h"
 
 #define ONE_YEAR 31104000
-#define ONE_DAY 
-#define ONE_HOUR 
-#define ONE_MINUTE
+#define ONE_MONTH 2592000
+#define ONE_DAY 86400
+#define ONE_HOUR 3600
+#define ONE_MINUTE 60
 // Sets default values
 AClock::AClock()
 {
@@ -40,14 +41,17 @@ void AClock::UpdateTime(float DeltaSec)
 {
 	TotalSecond +=DeltaSec*tiemScale;
 
+	//1일은 86400초 
 	currentDay = TotalSecond/86400;
-	int RemainingAfterDay = (int)TotalSecond%86400;
+	int RemainingAfterDay = (int)TotalSecond % 86400; //일을 제외한 나머지 초를 계산
 
-	currentHour = RemainingAfterDay/3600;
-	int RemaingAfterHour = RemainingAfterDay%3600;
+	currentHour = RemainingAfterDay/3600;	 // 남은 시간을 3600 나눠서 '시' 단위를 계산
+	
+	int RemaingAfterHour = RemainingAfterDay%3600; // 일, 시 제외한 나머지 초
 
-	currentMinute = RemaingAfterHour/60;
-	currentSecond = RemaingAfterHour%60;
+	currentMinute = RemaingAfterHour/60; // 일, 시 제외한 나머지 초
+	
+	currentSecond = RemaingAfterHour%60; // 분을 제외한 나머지 -> 남은 초
 }
 
 void AClock::RotateDirectionalLightWithTime(AActor* owningActor)
@@ -147,12 +151,21 @@ void AClock::UpdateSunColorByHourMinute(AActor* owningActor)
 
 FString AClock::GetTimeByTotalSec(float totalSec)
 {
-	//YEAR = totalSec/ONE_YEAR;
-	//urrentDay =(int)totalSec/ONE_DAY % 30;
-	//currentHour = (int)totalSec/ONE_HOUR % 24;
+	// year = totalSec / ONE_YEAR;
+	//month = totalSec / ONE_MONTH % 12; //1달로 나눈 후, 12로 나눈 나머지 값
+
+	currentDay = (int)totalSec / ONE_DAY % 30; // 1일로 나눈 후, 30으로 나눈 나머지 값
+	currentHour = (int)totalSec / ONE_HOUR % 24; // 1시간으로 나눈 후, 24로 나눈 나머지 값 
+	currentMinute = (int)totalSec / ONE_MINUTE % 60; // 1분으로 나눈 후, 60으로 나눈 나머지 값
+	currentSecond = (int)totalSec % 60;
 
 	FString Now;
-	Now = "D:" + FString::SanitizeFloat(currentDay);
-	
-	return FString();
+	Now = "D: " + FString::SanitizeFloat(currentDay)
+		+ "-H: " + FString::SanitizeFloat(currentHour)
+		+ "-M: " + FString::SanitizeFloat(currentMinute)
+		+ "-S: " + FString::SanitizeFloat(currentSecond);
+
+	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, (TEXT("%s"), Now));
+
+	return Now;
 }
