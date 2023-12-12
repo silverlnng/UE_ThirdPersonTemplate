@@ -3,6 +3,10 @@
 
 #include "Enemy.h"
 
+AEnemy::AEnemy()
+{
+}
+
 void AEnemy::Attack_Implementation()
 {
 	UE_LOG(LogTemp,Warning,TEXT("Enemy is attacking"));
