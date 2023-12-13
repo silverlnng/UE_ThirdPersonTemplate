@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Enemy.h"
-#include "ObserverInterface.h"
+#include "ObserverPattern/ObserverInterface.h"
 #include "Goblin.generated.h"
 
 /**

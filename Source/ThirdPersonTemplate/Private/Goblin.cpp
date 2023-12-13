@@ -27,7 +27,7 @@ void AGoblin::Defend_Implementation()
 	UE_LOG(LogTemp,Warning,TEXT("Goblin is defending"));
 }
 
-void AGoblin::NotifyAttack() override
+void AGoblin::NotifyAttack()
 {
 	
 }
