@@ -16,7 +16,7 @@ class THIRDPERSONTEMPLATE_API AGoblin : public AEnemy , public IObserverInterfac
 	GENERATED_BODY()
 public:
 	AGoblin();
-
+	//AEnemy 클래스의 가상함수를 오버라이드 하여 구현
 	virtual void Attack_Implementation() override;
 	virtual void Defend_Implementation() override;
 
@@ -29,6 +29,7 @@ public:
 	void UnRegisterObserver(IObserverInterface* Observer);
 
 private:
+	// 옵저버들의 목록
 	TArray<IObserverInterface*> observers;
 
 	
